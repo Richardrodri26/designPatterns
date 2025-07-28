@@ -1,3 +1,4 @@
+import { COLORS } from '../helpers/colors.ts';
 /**
  * ! Abstract Factory:
  * Es un patrón de diseño que permite crear familias de objetos relacionados
@@ -17,3 +18,77 @@
  *  (en este caso, hamburguesas y bebidas) sin especificar las clases concretas
  *  de cada uno de esos objetos en el código principal.
  */
+
+interface Hamburger {
+  prepare(): void;
+}
+
+interface Drink {
+  pour(): void;
+}
+
+class ChickenHamburger implements Hamburger {
+  prepare(): void {
+    console.log('Preparing Chicken %cHamburger', COLORS.yellow);
+  }
+
+}
+
+class BeefHamburger implements Hamburger {
+  prepare(): void {
+    console.log('Preparing Beef %cHamburger', COLORS.red);
+  }
+
+}
+
+class Water implements Drink {
+  pour(): void {
+    console.log('Pouring %cWater', COLORS.blue);
+  }
+}
+
+class Soda implements Drink {
+  pour(): void {
+    console.log('Pouring %cSoda', COLORS.red);
+  }
+}
+
+interface RestaurantFactory {
+  createHamburger(): Hamburger;
+  createDrink(): Drink;
+}
+
+
+class FastFoodRestaurantFactory implements RestaurantFactory {
+  createDrink(): Drink {
+    return new Soda();
+  }
+
+  createHamburger(): Hamburger {
+    return new BeefHamburger();
+  }
+}
+
+class HealthyRestaurantFactory implements RestaurantFactory {
+  createDrink(): Drink {
+    return new Water();
+  }
+
+  createHamburger(): Hamburger {
+    return new ChickenHamburger();
+  }
+}
+
+function main(factory: RestaurantFactory) {
+
+  const hamburger = factory.createHamburger();
+  const drink = factory.createDrink();
+
+
+  hamburger.prepare();
+  drink.pour();
+
+}
+
+main(new FastFoodRestaurantFactory());
+main(new HealthyRestaurantFactory());
