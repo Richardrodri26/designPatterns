@@ -71,7 +71,7 @@ class QueryBuilder {
 
   execute(): string {
     // Select id, name, email from users where age > 18 and country = 'Cri' order by name ASC limit 10;
-    const fields = this.fields.join(', ');
+    const fields = this.fields.length > 0 ? this.fields.join(', ') : '*';
     const conditions = this.conditions.join(' and ');
     const orderFields = this.orderFields.join(', ');
     const limit = this.limitCount !== undefined ? ` limit ${this.limitCount}` : '';
@@ -85,6 +85,7 @@ function main() {
     .where('age > 18')
     .where("country = 'Cri'") // Esto debe de hacer una condición AND
     .orderBy('name', 'ASC')
+    .orderBy('age', 'DESC')
     .limit(10)
     .execute();
 
