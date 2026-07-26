@@ -22,7 +22,7 @@ import { COLORS } from '../helpers/colors.ts';
  * - orderBy(field: string, order: string): QueryBuilder - opcional
  * - limit(limit: number): QueryBuilder - opcional
  * - execute(): string - retorna la consulta SQL
- * 
+ *
  ** Ejemplo de uso:
   const usersQuery = new QueryBuilder("users") // users es el nombre de la tabla
     .select("id", "name", "email")
@@ -50,24 +50,32 @@ class QueryBuilder {
   }
 
   select(...fields: string[]): QueryBuilder {
-    throw new Error('Method not implemented.');
+    this.fields = fields;
+    return this;
   }
 
   where(condition: string): QueryBuilder {
-    throw new Error('Method not implemented.');
+    this.conditions.push(condition);
+    return this;
   }
 
   orderBy(field: string, direction: 'ASC' | 'DESC' = 'ASC'): QueryBuilder {
-    throw new Error('Method not implemented.');
+    this.orderFields.push(`${field} ${direction}`);
+    return this;
   }
 
   limit(count: number): QueryBuilder {
-    throw new Error('Method not implemented.');
+    this.limitCount = count;
+    return this;
   }
 
   execute(): string {
     // Select id, name, email from users where age > 18 and country = 'Cri' order by name ASC limit 10;
-    throw new Error('Method not implemented.');
+    const fields = this.fields.join(', ');
+    const conditions = this.conditions.join(' and ');
+    const orderFields = this.orderFields.join(', ');
+    const limit = this.limitCount !== undefined ? ` limit ${this.limitCount}` : '';
+    return `Select ${fields} from ${this.table}${conditions ? ` where ${conditions}` : ''}${orderFields ? ` order by ${orderFields}` : ''}${limit}`;
   }
 }
 
