@@ -9,3 +9,71 @@
  *
  * https://refactoring.guru/es/design-patterns/bridge
  */
+import { COLORS } from '../helpers/colors.ts';
+
+// 1. Interfaz NotificationChannel
+// Define el método `send`, que cada canal de comunicación implementará.
+interface NotificationChannel {
+  send(message: string): void;
+}
+
+// 2. Implementaciones de Canales de Comunicación
+
+class EmailChannel implements NotificationChannel {
+  send(message: string): void {
+    console.log(`Enviando correo electrónico: ${message}`);
+  }
+}
+
+class SMSChannel implements NotificationChannel {
+  send(message: string): void {
+    console.log(`Enviando SMS: ${message}`);
+  }
+}
+
+class PushNotificationChannel implements NotificationChannel {
+  send(message: string): void {
+    console.log(`Enviando Push: ${message}`);
+  }
+}
+
+// 3. Clase Abstracta Notification
+// Define la propiedad `channel` y el método `notify`
+
+abstract class Notification {
+  protected channels: NotificationChannel[];
+
+  constructor(channels: NotificationChannel[]) {
+    this.channels = channels;
+  }
+
+  abstract notify(message: string): void;
+  abstract addChannel(channel: NotificationChannel): void;
+}
+
+class AlertNotificationChannel extends Notification{
+  override addChannel(channel: NotificationChannel): void {
+    this.channels.push(channel);
+  }
+
+  override notify(message: string): void {
+    console.log(`Enviando Alerta: ${message}`);
+    this.channels.forEach((channel) => channel.send(message));
+  }
+
+}
+
+function main() {
+  const channels = [
+    new EmailChannel(),
+    new SMSChannel(),
+    new PushNotificationChannel(),
+  ]
+
+  const alert = new AlertNotificationChannel(channels);
+
+  alert.notify('Alguien frente de la casa');
+  console.log('\n')
+}
+
+main();
