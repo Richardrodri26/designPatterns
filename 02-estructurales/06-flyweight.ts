@@ -8,3 +8,81 @@
  *
  * https://refactoring.guru/es/design-patterns/flyweight
  */
+import {COLORS} from "../helpers/colors.ts";
+
+interface Location {
+
+  display(coordinates: { x: number; y: number; }): void;
+
+}
+
+// Flyweight
+class LocationIcon implements Location {
+
+  private type: string; // hospital,escuela, parque
+  private iconImage: string; // imagen del marcador
+
+  constructor(type: string, iconImage: string) {
+    this.type = type;
+    this.iconImage = iconImage;
+  }
+
+  display(coordinates: { x: number; y: number }) {
+    console.log(`Coords: ${coordinates.x}, ${coordinates.y} con icono %c[${this.iconImage}]`, COLORS.green);
+  }
+
+}
+
+
+// Fabrica de Flyweights
+class LocationFactory {
+
+  private icons: Record<string, LocationIcon> = {};
+
+  // Escuela, hospital, parque
+  getLocationIcon(type: string): LocationIcon{
+    if(!this.icons[type]) {
+      console.log(`Creando una nueva instancia del icono de tipo ${type}`)
+      const iconImage = `imagen_de_${type.toLowerCase()}.png`;
+      this.icons[type] = new LocationIcon(type, iconImage);
+    }
+
+    return this.icons[type];
+  }
+
+}
+
+class MapLocation {
+  private coordinates: { x: number; y: number } = {};
+  private icon: LocationIcon;
+
+  constructor(
+    x: number,
+    y: number,
+    icon: LocationIcon,
+  ) {
+    this.coordinates = { x,y }
+    this.icon = icon;
+  }
+
+  display(){
+    this.icon.display(this.coordinates);
+  }
+}
+
+function main() {
+  const factory = new LocationFactory();
+
+  const locations = [
+    new MapLocation(10,20, factory.getLocationIcon('hospital')),
+    new MapLocation(20,40, factory.getLocationIcon('hospital')),
+    new MapLocation(35,65, factory.getLocationIcon('parque')),
+    new MapLocation(35,65, factory.getLocationIcon('parque')),
+    new MapLocation(35,65, factory.getLocationIcon('parque')),
+    new MapLocation(35,65, factory.getLocationIcon('escuela')),
+  ];
+
+  locations.forEach(location => location.display())
+}
+
+main();
